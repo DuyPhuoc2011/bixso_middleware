@@ -18,3 +18,12 @@ exports.testMongoConnection = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+exports.getArticles = async (req, res) => {
+    try {
+        const articles = await mongoose.connection.db.collection('articles').find({}).limit(10).toArray();
+        res.json(articles);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
