@@ -1,9 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { connectMongo, connectPg } = require('./config/database');
-const mongoRoutes = require('./routes/mongoRoutes');
+const { connectPg } = require('./config/database');
+const { connectFirebase } = require('./config/firebase');
 const pgRoutes = require('./routes/pgRoutes');
+const firebaseRoutes = require('./routes/firebaseRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,12 +14,12 @@ app.use(cors());
 app.use(express.json());
 
 // Database Connections
-connectMongo();
 connectPg();
+connectFirebase();
 
 // Routes
-app.use('/api/mongo', mongoRoutes);
 app.use('/api/pg', pgRoutes);
+app.use('/api/firebase', firebaseRoutes);
 
 app.get('/', (req, res) => {
     res.send('Bixso Middleware API is running');

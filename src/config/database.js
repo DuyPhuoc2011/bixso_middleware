@@ -1,17 +1,5 @@
-const mongoose = require('mongoose');
 const { Pool } = require('pg');
 require('dotenv').config();
-
-// MongoDB Connection
-const connectMongo = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log('MongoDB Connected Successfully');
-  } catch (err) {
-    console.error('MongoDB Connection Error:', err.message);
-    // process.exit(1); // Optional: Exit process on failure
-  }
-};
 
 // PostgreSQL Connection
 const pgPool = new Pool({
@@ -32,4 +20,4 @@ const connectPg = async () => {
   }
 };
 
-module.exports = { connectMongo, pgPool, connectPg };
+module.exports = { pgPool, connectPg };
