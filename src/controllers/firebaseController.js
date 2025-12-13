@@ -14,6 +14,29 @@ const checkConnection = async (req, res) => {
     }
 };
 
+const convertTimestamps = (data) => {
+    if (data === null || data === undefined) return data;
+
+    // Check if it's a Firestore Timestamp (has toDate method)
+    if (typeof data.toDate === 'function') {
+        return data.toDate().toISOString(); // or .toString() if you prefer
+    }
+
+    if (Array.isArray(data)) {
+        return data.map(item => convertTimestamps(item));
+    }
+
+    if (typeof data === 'object') {
+        const newData = {};
+        for (const key in data) {
+            newData[key] = convertTimestamps(data[key]);
+        }
+        return newData;
+    }
+
+    return data;
+};
+
 const getArticles = async (req, res) => {
     try {
         const db = admin.firestore();
@@ -26,7 +49,11 @@ const getArticles = async (req, res) => {
 
         const articles = [];
         snapshot.forEach(doc => {
-            articles.push({ id: doc.id, ...doc.data() });
+            const data = doc.data();
+            articles.push({
+                id: doc.id,
+                ...convertTimestamps(data)
+            });
         });
 
         res.status(200).json(articles);
